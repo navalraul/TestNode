@@ -43,6 +43,39 @@ app.post("/register", async function (req, res) {
     res.send("Registered done...")
 })
 
+app.get('/find', async (req, res) => {
+
+    const { email } = req.body;
+    if(!email) return res.send("Email is required")
+
+    const user = await User.find({email: email }).select("-password -number")
+
+    if(user.length) {
+        return res.send(user[0])
+    }
+    return res.send("No user found")
+})
+
+app.patch('/update/:id', async (req, res) => {
+    const { age, number} = req.body;
+    const {id} = req.params;
+
+    if(!id) return res.send("Id is required..")
+    if(!age) return res.send("age is required..")
+    if(!number) return res.send("number is required..")
+
+    const updatedUser = await User.findByIdAndUpdate(id, {age, number}, {new: true})
+    return res.json({ message: "Data updated..", data: updatedUser})
+})
+
+app.delete('/delete', async function(req, res) {
+    const { id, name } = req.query;
+    if (!id) return res.send("Id is required")
+
+    const deletedUser = await User.findByIdAndDelete(id)
+    return res.json({ message: "User defined", data: deletedUser})
+})
+
 
 mongoose.connect("mongodb+srv://test:test123@cluster0.k0bgc2r.mongodb.net/Naval")
 .then(()=> {
