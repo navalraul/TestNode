@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import { Login, Register, getCurrentUser } from './controllers/UserControllers.js';
-import { addProduct } from './controllers/Product.conroller.js';
+import { addProduct, allProducts, getYourProducts, updateProduct } from './controllers/Product.conroller.js';
 import { checkSeller } from './Middleware/Seller.middleware.js';
 
 
@@ -21,6 +21,12 @@ app.post('/login', Login)
 app.post('/get-current-user', getCurrentUser)
 
 app.post('/add-product',checkSeller, addProduct)
+
+app.get('/all-products', allProducts)
+
+app.get('/getyour-products', checkSeller, getYourProducts)
+
+app.patch('/update-product', checkSeller, updateProduct)
 
 
 
