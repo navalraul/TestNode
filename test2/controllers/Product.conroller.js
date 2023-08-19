@@ -1,5 +1,6 @@
 import ProductModal from "../Modals/Product.modal.js";
 import jwt from 'jsonwebtoken';
+// import UserModals from "../Modals/User.modals.js";
 
 export const addProduct = async( req, res) => {
 
@@ -85,6 +86,29 @@ export const updateProduct= async(req, res)=> {
             return res.status(200).json({ status: "Sucess", product: updatedProduct })
         }
         return res.status(404).json({ status: "error", message: "You are trying to update product which is not yours.." })
+
+    } catch (error) {
+        return res.status(500).json({ status: "error", error: error.message })
+    }
+}
+
+
+export const deleteYourProduct = async (req, res)=> {
+    try{
+
+        const{productId, token} = req.body;
+
+        if(!productId) return res.status(404).json({status: "error", message: "Product id is mandatory.."})
+
+        const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedData.userId
+
+        const isDeleted = await ProductModal.findOneAndDelete({ _id: productId, userId: userId})
+        if(isDeleted) {
+            return res.status(200).json({ success: true, message: "Product deleted successfully...."})
+        }
+
+        throw new Error("Mongodb error")
 
     } catch (error) {
         return res.status(500).json({ status: "error", error: error.message })
