@@ -1,4 +1,4 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const productSchema = new Schema({
     name: {
@@ -17,10 +17,28 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    userId : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'User'
-    }
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false,
+    },
+
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
+
+    ratings: {
+        type: [Number],
+        enum: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+    },
+
+    comments: {
+        type: [Object],
+    },
 })
 
-export default mongoose.model("Product",productSchema)
+export default mongoose.model("Product", productSchema)

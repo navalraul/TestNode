@@ -1,6 +1,6 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const userSchema = new Schema ({
+const userSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -23,6 +23,10 @@ const userSchema = new Schema ({
     },
     whislist: {
         type: [String]
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false,
     }
 })
 

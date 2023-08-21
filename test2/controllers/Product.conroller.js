@@ -1,6 +1,6 @@
 import ProductModal from "../Modals/Product.modal.js";
 import jwt from 'jsonwebtoken';
-// import UserModals from "../Modals/User.modals.js";
+import UserModals from "../Modals/User.modals.js";
 
 export const addProduct = async( req, res) => {
 
@@ -112,5 +112,65 @@ export const deleteYourProduct = async (req, res)=> {
 
     } catch (error) {
         return res.status(500).json({ status: "error", error: error.message })
+    }
+}
+
+export const addRating = async (req, res) => {
+    try {
+      const { rating, productId } = req.body;
+  
+      if (rating > 5) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Not a valid rating!" });
+      }
+  
+      const addedRatingToProduct = await ProductModal.findByIdAndUpdate(
+        productId,
+        { $push: { ratings: rating } },
+        { new: true }
+      );
+  
+      if (addedRatingToProduct) {
+        return res.status(200).json({
+          success: true,
+          message: "Rating added successfully!",
+          product: addedRatingToProduct,
+        });
+      }
+  
+      throw new Error("MongoDb error!");
+    } catch (error) {
+      return res.status(500).json({ status: "error", message: error });
+    }
+  };
+  
+  export const addComments = async (req, res) => {
+    try {
+      const { comment, productId, userId } = req.body;
+  
+      const user = await UserModals.findById(userId);
+  
+      const addedcommentToProduct = await ProductModal.findByIdAndUpdate(
+        productId,
+        {
+          $push: {
+            comments: { comments: comment, name: user.name, userId: userId },
+          },
+        },
+        { new: true }
+      );
+  
+      if (addedcommentToProduct) {
+        return res.status(200).json({
+          success: true,
+          message: "comment added successfully!",
+          product: addedcommentToProduct,
+        });
+      }
+  
+      throw new Error("MongoDb error!");
+    } catch (error) {
+      return res.status(500).json({ status: "error", message: "server error" });
     }
 }
