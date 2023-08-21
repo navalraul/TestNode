@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { Login, Register, getCurrentUser } from './controllers/UserControllers.js';
 import { addComments, addProduct, addRating, allProducts, deleteYourProduct, getYourProducts, updateProduct } from './controllers/Product.conroller.js';
-import { checkIsAdmin, checkSeller, isCheckValidUser } from './Middleware/Seller.middleware.js';
+import { checkIsAdmin, checkSeller, isCheckValidUser } from './Middleware/All.middleware.js';
 import { addCart, addWhislist,  deleteCartProduct, getCartProducts, getWhislist } from './controllers/Buyer.controller.js';
 import { blockProduct, blockUser, getAllBuyers, getAllProducts, getAllSellers, getBlockedProducts, getUnverifiedProducts, getVerifiedProducts, unBlockUser, unblockProduct, verifyProduct } from './controllers/Admin.controller.js';
 

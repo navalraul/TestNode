@@ -55,8 +55,8 @@ export const checkIsAdmin = async (req, res) => {
         const user = await UserModals.findById(userId);
 
         // console.log(user)
-        if(!user || user?.role == "Admin") {
-            return res.status(404).json({ message: "User is not a admin", status: "error"})
+        if(!user || user?.role != "Admin") {
+            return res.status(404).json({ message: "User not a admin.", status: "error" })
         }
 
         next();
