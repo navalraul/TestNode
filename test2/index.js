@@ -42,7 +42,7 @@ app.patch('/update-product', checkSeller, updateProduct)
 
 app.delete('/delete-your-product', checkSeller, deleteYourProduct)
 
-
+///admin
 
 
 
