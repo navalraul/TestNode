@@ -28,7 +28,7 @@ export const checkSeller = async (req, res, next) => {
     }
 }
 
-export const checkIsAdmin = async (req, res) => {
+export const checkIsAdmin = async (req, res, next) => {
     try {
 
         const { token } = req.body;
@@ -67,7 +67,7 @@ export const checkIsAdmin = async (req, res) => {
 }
 
 
-export const isCheckValidUser = async (req, res) => {
+export const isCheckValidUser = async (req, res, next) => {
     try {
 
         const { token } = req.body;
