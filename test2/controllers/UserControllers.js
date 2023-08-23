@@ -4,12 +4,12 @@ import jwt from "jsonwebtoken"
 
 export const Login = async (req, res) => {
     try{
-        const { email, password } = req.body;
-        if(!email || !password) return res.json({ status: "error", message: "All fields are mandatory..."})
+        const { email, password } = req.body.userData;
+        if(!email || !password) return res.json({ success: false, message: "All fields are mandatory..."})
 
 
         const user = await UserModals.findOne({email})
-        if(!user) return res.json({ status: "error", message: "User not found.."})
+        if(!user) return res.json({ success: false, message: "User not found.."})
 
         if(user.isBlocked) {
             return res.status(404).json({ success: false, message: "You are Blocked, Contact us." })
@@ -25,13 +25,13 @@ export const Login = async (req, res) => {
             }
             const token = jwt.sign({ userId: user._id}, process.env.JWT_SECRET)
             // console.log(token, "token here")
-            return res.json({ status: "Success", message: "Login Success", user: userObject, token: token})
+            return res.json({ success: true, message: "Login Success", user: userObject, token: token})
         }
 
-        return res.json({status: "error", message: "Password is wrong.."})
+        return res.json({success: false, message: "Password is wrong.."})
 
     } catch (error) {
-        return res.json({ status: "error", message: error})
+        return res.json({ success: false, message: error})
     }
 }
 
@@ -39,12 +39,13 @@ export const Login = async (req, res) => {
 
 export const Register = async ( req, res) => {
     try{
-        const { name, email, password,role} = req.body;
-        if(!name || !email || !password || !role) return res.json({ status: "error", message: "All fields are mandatory" })
+        const {userData} = req.body;
+        const { name, email, password,role} = userData;
+        if(!name || !email || !password || !role) return res.json({success: false, message: "All fields are mandatory" })
 
         const isEmailExist = await UserModals.find({email})
         if(isEmailExist.length) {
-            return res.json({ status: "error", message: "Email is already exist"})
+            return res.json({ success: false, message: "Email is already exist"})
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -52,10 +53,10 @@ export const Register = async ( req, res) => {
         const user = new UserModals ({ name, email, password: hashedPassword, role})
 
         await user.save();
-        return res.json({ status: "Success", message: "User registered successfully.."})
+        return res.json({ success: true, message: "User registered successfully.."})
 
     } catch (error) {
-        return res.json({ status: "error", message: error })
+        return res.json({ success: false, message: error })
     }
 
 }
