@@ -5,12 +5,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-// import MyContext from './components/Context/Mycontext'
+import MyContext from './components/Context/Mycontext'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <MyContext> */}
+    <MyContext>
     <BrowserRouter>
     <Toaster
         position="top-center"
@@ -39,7 +39,7 @@ root.render(
       />
       <App />
     </BrowserRouter>
-    {/* </MyContext> */}
+    </MyContext>
   </React.StrictMode>
 );
 

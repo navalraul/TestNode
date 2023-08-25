@@ -1,15 +1,15 @@
 import axios from 'axios';
-import React, {  useState } from 'react'
+import React, {  useContext, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-// import { MyUserContext } from './Context/Mycontext';
+import { MyUserContext } from './Context/Mycontext';
 
 const Login = () => {
 
 
     const [userData, setUserData] = useState({ email: "", password: ""});
     const router = useNavigate();
-    // const { login } = useContext(MyUserContext)
+    const { state, dispatch } = useContext(MyUserContext)
 
     const handleChange = (event) => {
         setUserData({ ...userData, [event.target.name]: event.target.value })
@@ -20,10 +20,11 @@ const Login = () => {
         if (userData.email && userData.password) {
             const response = await axios.post("http://localhost:8000/login", { userData });
             if (response.data.success) {
-                // const token = response.data.token;
-                // const userData = response.data.userData;
-
-                // await login(token, userData);
+                dispatch ({
+                    type : "LOGIN",
+                    payload : response.data.user
+                })
+                localStorage.setItem("token", JSON.stringify(response.data.token))
 
                 setUserData({ email: "", password: "" })
                 router('/')
@@ -35,6 +36,13 @@ const Login = () => {
             toast.error("All fields are mandtory.")
         }
     }
+
+
+    useEffect(() => {
+        if(state?.user?.name) {
+            'router'('/')
+        }
+    },[state])
 
     return (
         <div>

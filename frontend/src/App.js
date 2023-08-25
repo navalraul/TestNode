@@ -4,8 +4,12 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
+import { useContext } from 'react';
+import { MyUserContext } from './components/Context/Mycontext';
 
 function App() {
+  const { state} = useContext(MyUserContext)
+  console.log(state?.user , "-user")
   return (
     <div className="App">
       <Routes >

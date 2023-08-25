@@ -1,68 +1,50 @@
-// import { createContext, useEffect, useReducer } from "react"
+import { createContext, useEffect, useReducer } from "react"
+import axios from "axios";
 
+export const MyUserContext = createContext();
 
-// const initialState = { currentuser: null, token: null }
+const initialState = { user: null }
 
-// const reducer = (state, action) => {
-//     switch (action.type) {
-//         case "LOGIN":
-//             return {
-//                 ...state,
-//                 currentuser: action.payload,
-//                 token: action.token,
-//             };
-//         case "LOGOUT":
-//             return {
-//                 currentuser: null,
-//                 token: null,
-//             };
-//         default:
-//             return state;
-//     }
-// };
+const reducer = (state, action) => {
+    switch (action.type) {
+        case "LOGIN":
+            return {...state,user: action.payload}
+        case "LOGOUT":
+            return {...state, user: null}
+        default:
+            return state
+    }
+}
 
+const MyContext = ({ children }) => {
 
-// export const MyUserContext = createContext();
+    const [state, dispatch] = useReducer(reducer, initialState);
 
-// const MyContext = ({ children }) => {
+    useEffect(()=> {
+        async function getCurrentUserData(){
+            var token = JSON.parse(localStorage.getItem("token"))
+            const response = await axios.post("http://localhost:8001/get-current-user", { token })
+            if(response.data.success) {
+                dispatch({
+                    type: "LOGIN",
+                    payload: response.data.user
+                })
+            } else {
+                dispatch({
+                    type: "LOGOUT"
+                })
+            }
+        }
+        getCurrentUserData();
+    },[])
+  
 
-//     const [state, dispatch] = useReducer(reducer, initialState);
+    return (
+        <MyUserContext.Provider value={{ state, dispatch }} >
+            {children}
+        </MyUserContext.Provider>
+    )
 
-//     // console.log("userDetails - ", state.currentuser, "token - ", state?.token);
+}
 
-//     const login = (token, userData) => {
-//         localStorage.setItem("userToken", JSON.stringify(token));
-//         localStorage.setItem("userData", JSON.stringify(userData));
-//         dispatch({
-//             type: "LOGIN",
-//             payload: userData,
-//             token: token,
-//         });
-//     };
-//     const logout = () => {
-//         localStorage.removeItem("userToken");
-//         localStorage.removeItem("userData");
-//         dispatch({
-//             type: "LOGOUT",
-//         });
-//     };
-
-//     useEffect(() => {
-//         const getToken = JSON.parse(localStorage.getItem("userToken"));
-//         const userData = JSON.parse(localStorage.getItem("userData"));
-//         dispatch({
-//             type: "LOGIN",
-//             token: getToken,
-//             payload: userData,
-//         });
-//     }, []);
-
-//     return (
-//         <MyUserContext.Provider value={{ login, logout, state }} >
-//             {children}
-//         </MyUserContext.Provider>
-//     )
-
-// }
-
-// export default MyContext;
+export default MyContext;

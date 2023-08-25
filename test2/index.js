@@ -23,6 +23,8 @@ app.post('/register', Register)
 
 app.post('/login', Login)
 
+app.post('/get-current-user', getCurrentUser)
+
 app.post('/add-cart', addCart)
 
 app.get('/get-cart-products', getCartProducts)
@@ -33,7 +35,6 @@ app.post('/add-whislist', addWhislist)
 
 app.get('/get-whislist', getWhislist)
 
-app.post('/get-current-user', getCurrentUser)
 
 app.post('/add-product',checkSeller, addProduct)
 
@@ -73,6 +74,6 @@ mongoose.connect(process.env.MONGO_URL)
     console.log("Error in connecting mongoDb", error)
 })
 
-app.listen(8000, ()=> {
+app.listen(8001, ()=> {
     console.log("Server running on port 8000")
 })
