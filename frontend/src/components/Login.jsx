@@ -26,7 +26,6 @@ const Login = () => {
                     payload : response.data.user
                 })
                 localStorage.setItem("token", JSON.stringify(response.data.token))
-
                 setUserData({ email: "", password: "" })
                 router('/')
                 toast.success(response.data.message)
