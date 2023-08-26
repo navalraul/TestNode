@@ -5,12 +5,15 @@ import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
 import { useContext } from 'react';
-import { MyUserContext } from './components/Context/Mycontext';
+import { AuthContext } from './components/Context/AuthContext';
 
 function App() {
-  const { state} = useContext(MyUserContext)
-  console.log(state?.user , "-user")
+
+  const { state } = useContext(AuthContext)
+  console.log(state?.user, "user")
+
   return (
+
     <div className="App">
       <Routes >
         <Route exact path='/' element={<Home />} />

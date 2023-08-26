@@ -1,15 +1,16 @@
-import axios from 'axios';
-import React, {  useContext, useEffect, useState } from 'react'
+
+import React, { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { MyUserContext } from './Context/Mycontext';
+import axios from 'axios';
+import { AuthContext } from './Context/AuthContext';
 
 const Login = () => {
 
 
     const [userData, setUserData] = useState({ email: "", password: ""});
     const router = useNavigate();
-    const { state, dispatch } = useContext(MyUserContext)
+    const { state, dispatch } = useContext(AuthContext)
 
     const handleChange = (event) => {
         setUserData({ ...userData, [event.target.name]: event.target.value })
@@ -18,7 +19,7 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (userData.email && userData.password) {
-            const response = await axios.post("http://localhost:8000/login", { userData });
+            const response = await axios.post("http:localhost.8001/login", { userData });
             if (response.data.success) {
                 dispatch ({
                     type : "LOGIN",

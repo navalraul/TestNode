@@ -1,15 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MyUserContext } from './Context/Mycontext';
 
 const Register = () => {
 
     const [userData, setUserData] = useState({ name: "", email: "", password: "", confirmPassword: "", role: "Buyer" })
     const router = useNavigate();
 
-    const {state} = useContext(MyUserContext)
 
     const handleChange = (event) => {
         setUserData({ ...userData, [event.target.name]: event.target.value })
@@ -24,7 +22,7 @@ const Register = () => {
         event.preventDefault();
         if(userData.email && userData.password && userData.confirmPassword && userData.name && userData.role) {
             if(userData.password === userData.confirmPassword) {
-                const response = await axios.post("http://localhost:8000/register", {userData})
+                const response = await axios.post("http://localhost:8001/register", {userData})
                 if(response.data.success){
                     setUserData({ name: "", email: "", password: "", confirmPassword: "", role: "Buyer" })
                     router('/login')
@@ -41,11 +39,11 @@ const Register = () => {
 
     }
 
-    useEffect(() => {
-        if (state?.user?.name) {
-            'router'('/')
-        }
-    }, [state])
+    // useEffect(() => {
+    //     if (state?.user?.name) {
+    //         'router'('/')
+    //     }
+    // }, [state])
 
     return (
         <div>
