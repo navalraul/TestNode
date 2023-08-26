@@ -2,6 +2,31 @@ import UserModals from "../Modals/User.modals.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken"
 
+
+export const Register = async ( req, res) => {
+    try{
+        const {userData} = req.body;
+        const { name, email, password,role} = userData;
+        if(!name || !email || !password || !role) return res.json({success: false, message: "All fields are mandatory" })
+
+        const isEmailExist = await UserModals.find({email})
+        if(isEmailExist.length) {
+            return res.json({ success: false, message: "Email is already exist"})
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = new UserModals ({ name, email, password: hashedPassword, role})
+
+        await user.save();
+        return res.json({ success: true, message: "User registered successfully.."})
+
+    } catch (error) {
+        return res.json({ success: false, message: error })
+    }
+
+}
+
 export const Login = async (req, res) => {
     try{
         const { email, password } = req.body.userData;
@@ -35,31 +60,6 @@ export const Login = async (req, res) => {
     }
 }
 
-
-
-export const Register = async ( req, res) => {
-    try{
-        const {userData} = req.body;
-        const { name, email, password,role} = userData;
-        if(!name || !email || !password || !role) return res.json({success: false, message: "All fields are mandatory" })
-
-        const isEmailExist = await UserModals.find({email})
-        if(isEmailExist.length) {
-            return res.json({ success: false, message: "Email is already exist"})
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = new UserModals ({ name, email, password: hashedPassword, role})
-
-        await user.save();
-        return res.json({ success: true, message: "User registered successfully.."})
-
-    } catch (error) {
-        return res.json({ success: false, message: error })
-    }
-
-}
 
 export const getCurrentUser = async ( req, res) => {
     try{
