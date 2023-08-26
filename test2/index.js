@@ -8,12 +8,14 @@ import { addComments, addProduct, addRating, allProducts, deleteYourProduct, get
 import { checkIsAdmin, checkSeller, isCheckValidUser } from './Middleware/All.middleware.js';
 import { addCart, addWhislist,  deleteCartProduct, getCartProducts, getWhislist } from './controllers/Buyer.controller.js';
 import { blockProduct, blockUser, getAllBuyers, getAllProducts, getAllSellers, getBlockedProducts, getUnverifiedProducts, getVerifiedProducts, unBlockUser, unblockProduct, verifyProduct } from './controllers/Admin.controller.js';
+import morgan from 'morgan';
 
 
 const app = express();
 app.use(express.json());
 dotenv.config();
 app.use(cors())
+app.use(morgan("dev"))
 
 app.post('/', (req, res) => {
     res.send("Working....")
@@ -40,7 +42,7 @@ app.post('/add-product',checkSeller, addProduct)
 
 app.get('/all-products', allProducts)
 
-app.get('/getyour-products', checkSeller, getYourProducts)
+app.post('/getyour-products', checkSeller, getYourProducts)
 
 app.patch('/update-product', checkSeller, updateProduct)
 

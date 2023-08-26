@@ -8,9 +8,9 @@ import { AuthContext } from './Context/AuthContext';
 const Login = () => {
 
 
-    const [userData, setUserData] = useState({ email: "", password: ""});
+    const [userData, setUserData] = useState({ email: "", password: "" });
     const router = useNavigate();
-    const { state, dispatch } = useContext(AuthContext)
+    const { state, Login } = useContext(AuthContext)
 
     const handleChange = (event) => {
         setUserData({ ...userData, [event.target.name]: event.target.value })
@@ -19,30 +19,30 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (userData.email && userData.password) {
-            const response = await axios.post("http:localhost.8001/login", { userData });
+            const response = await axios.post("http://localhost:8000/login", {
+              userData,
+            });
             if (response.data.success) {
-                dispatch ({
-                    type : "LOGIN",
-                    payload : response.data.user
-                })
-                localStorage.setItem("token", JSON.stringify(response.data.token))
-                setUserData({ email: "", password: "" })
-                router('/')
-                toast.success(response.data.message)
+              Login(response.data);
+              setUserData({ email: "", password: "" });
+              toast.success(response.data.message);
+              router("/");
+              console.log(response.data);
+              // console.log(response.data);
             } else {
-                toast.error(response.data.message)
+              toast.error(response.data.message);
             }
-        } else {
-            toast.error("All fields are mandtory.")
-        }
+          } else {
+            toast.error("Please fill all the fields!");
+          }
     }
 
 
     useEffect(() => {
-        if(state?.user?.name) {
+        if (state?.user?.name) {
             'router'('/')
         }
-    },[state])
+    }, [state])
 
     return (
         <div>

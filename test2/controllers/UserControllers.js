@@ -44,9 +44,10 @@ export const Login = async (req, res) => {
 
         if(isPasswordRight) {
             const userObject = {
-                name: user.name,
-                email: user.email,
-                _id: user._id
+                name: user?.name,
+                email: user?.email,
+                role: user?.role,
+                _id: user?._id
             }
             const token = jwt.sign({ userId: user._id}, process.env.JWT_SECRET)
             // console.log(token, "token here")
@@ -56,7 +57,7 @@ export const Login = async (req, res) => {
         return res.json({success: false, message: "Password is wrong.."})
 
     } catch (error) {
-        return res.json({ success: false, message: error})
+        return res.json({ success: false, message: "errpr from back"})
     }
 }
 
@@ -64,12 +65,12 @@ export const Login = async (req, res) => {
 export const getCurrentUser = async ( req, res) => {
     try{
         const { token } = req.body;
-        if(!token) return res.status(404).json({ status: "error", message: "Token is required!" })
+        if(!token) return res.status(404).json({ success: false, message: "Token is required!" })
 
         const decodedData= jwt.verify(token, process.env.JWT_SECRET )
 
         if(!decodedData) {
-            return res.status(404).json({ status: "error", message: "Not valid json token.." })
+            return res.status(404).json({ success: false , message: "Not valid json token.." })
         }
 
         const userId = decodedData?.userId
@@ -77,20 +78,21 @@ export const getCurrentUser = async ( req, res) => {
         const user = await UserModals.findById(userId);
 
         if(!user) {
-            return res.status(404).json({ status: "error", message: "User not found.." })
+            return res.status(404).json({ success: false, message: "User not found.." })
         }
 
         const userObeject = {
             name: user?.name,
             email: user?.email,
+            role: user?.role,
             _id: user?._id
         }
 
-        return res.status(200).json({ status: "Success", user: userObeject })
+        return res.status(200).json({ success: true, user: userObeject })
 
 
     } catch (error) {
-        return res.json({ status: "error", message: error })
+        return res.json({ success: false , message: error })
     }
 
 }
