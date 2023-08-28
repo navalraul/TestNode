@@ -1,13 +1,14 @@
 import UserModals from "../Modals/User.modals.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken"
+import { sendTwilioMessage } from "../Helpers/Sms.js";
 
 
 export const Register = async ( req, res) => {
     try{
         const {userData} = req.body;
-        const { name, email, password,role} = userData;
-        if(!name || !email || !password || !role) return res.json({success: false, message: "All fields are mandatory" })
+        const { name, email, password,role, number } = userData;
+        if(!name || !email || !password || !role || !number ) return res.json({success: false, message: "All fields are mandatory" })
 
         const isEmailExist = await UserModals.find({email})
         if(isEmailExist.length) {
@@ -16,7 +17,7 @@ export const Register = async ( req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = new UserModals ({ name, email, password: hashedPassword, role})
+        const user = new UserModals ({ name, email, password: hashedPassword, role, number})
 
         await user.save();
         return res.json({ success: true, message: "User registered successfully.."})
@@ -95,4 +96,47 @@ export const getCurrentUser = async ( req, res) => {
         return res.json({ success: false , message: error })
     }
 
+}
+
+
+export const getNumber = async(req, res) => {
+    try{
+
+        const { userId} = req.body;
+        if(!userId) return res.json({success: false, message: "UserId is mandatory"})
+
+        const userNumber = await UserModals.findById(userId).select("number isNumberVerified")
+        if(userNumber) {
+            return res.json({success:true, number: userNumber.number, isNumberVerified: userNumber.isNumberVerified })
+
+        }
+        return res.json({success: false, message: "Internal error try again.."})
+
+    } catch (error) {
+        return res.json({ success: false , message: error })
+    }
+}
+
+export const sendOtp = async(req, res) => {
+    try{
+
+        const { userId } = req.body;
+        if(!userId) return res.json({success: false, message: "UserId is mandatory..."})
+
+        const userNumber = await UserModals.findById(userId)
+
+        const otp = "56561"
+        const message = `Hi, Your Awdiz mobile verfication otp is ${otp}`
+        if(userNumber) {
+            const responseFromTwilio = sendTwilioMessage(userNumber.number, message)
+            if(responseFromTwilio) {
+                userNumber.otpForNumberVerification = otp;
+                await userNumber.save()
+                return res.json({ success: true, message: "Otp send to your number"})
+            }
+        }
+        return res.json({ success: false, message: "User not found.."})
+    } catch (error) {
+        return res.json({ success: false , message: error })
+    }
 }

@@ -6,27 +6,27 @@ import { AuthContext } from './Context/AuthContext';
 
 const Register = () => {
 
-    const [userData, setUserData] = useState({ name: "", email: "", password: "", confirmPassword: "", role: "Buyer" })
+    const [userData, setUserData] = useState({ name: "", email: "", password: "", confirmPassword: "", role: "Buyer", number: "" })
     const router = useNavigate();
-    const {state} = useContext(AuthContext)
+    const { state } = useContext(AuthContext)
 
 
     const handleChange = (event) => {
         setUserData({ ...userData, [event.target.name]: event.target.value })
     }
 
-    const handleChangeForSelect=(event) => {
-        setUserData({...userData, "role": event.target.value})
+    const handleChangeForSelect = (event) => {
+        setUserData({ ...userData, "role": event.target.value })
     }
     // console.log(userData, "userData")
 
-    const handleSubmit = async (event)=> {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        if(userData.email && userData.password && userData.confirmPassword && userData.name && userData.role) {
-            if(userData.password === userData.confirmPassword) {
-                const response = await axios.post("http://localhost:8000/register", {userData})
-                if(response.data.success){
-                    setUserData({ name: "", email: "", password: "", confirmPassword: "", role: "Buyer" })
+        if (userData.email && userData.password && userData.confirmPassword && userData.name && userData.role && userData.number) {
+            if (userData.password === userData.confirmPassword) {
+                const response = await axios.post("http://localhost:8000/register", { userData })
+                if (response.data.success) {
+                    setUserData({ name: "", email: "", password: "", confirmPassword: "", role: "Buyer", number: "" })
                     router('/login')
                     toast.success(response.data.message)
                 } else {
@@ -43,7 +43,7 @@ const Register = () => {
 
     useEffect(() => {
         if (state?.user?.name) {
-            'router'('/')
+            router('/')
         }
     }, [state])
 
@@ -55,6 +55,8 @@ const Register = () => {
                 <input type='text' onChange={handleChange} name='name' value={userData.name} /><br />
                 <label>Email</label><br />
                 <input type='email' onChange={handleChange} name='email' value={userData.email} /><br />
+                <label>Contact Number</label><br />
+                <input type='number' onChange={handleChange} name='number' value={userData.number} /><br />
                 <label>Role</label><br />
                 <select onChange={handleChangeForSelect} >
                     <option value="Buyer">Buyer</option>
@@ -66,7 +68,7 @@ const Register = () => {
                 <input type='password' onChange={handleChange} name='confirmPassword' value={userData.confirmPassword} /><br />
                 <input type='submit' value='Register' /><br />
             </form>
-            <button onClick={()=> router('/login')}>Login</button>
+            <button onClick={() => router('/login')}>Login</button>
         </div>
     )
 }

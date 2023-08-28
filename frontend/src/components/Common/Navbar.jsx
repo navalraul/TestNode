@@ -36,7 +36,7 @@ const Navbar = () => {
                         <p>
                             {state?.user?.name?.toUpperCase()}({state?.user?.role})
                         </p>
-                        <h4>Profile</h4>
+                        <h4 onClick={() => router('/profile')}>Profile</h4>
                         {state?.user?.role === "Buyer" && <h4>Cart</h4>}
                         <h4 onClick={Logout}>Logout</h4>
                     </>
