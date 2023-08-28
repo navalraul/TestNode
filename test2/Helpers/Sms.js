@@ -1,7 +1,7 @@
 
 import twilio from 'twilio';
 
-export const sendTwilioMessage = async (req, res) => {
+export const sendTwilioMessage = async (toNumber, messageBody) => {
     try{
         const client = twilio(process.env.TWILIO_ACCOUNTSID, process.env.TWILIO_AUTHTOKEN);
         const message = await client.messages.create({

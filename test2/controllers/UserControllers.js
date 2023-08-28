@@ -1,7 +1,8 @@
 import UserModals from "../Modals/User.modals.js";
 import bcrypt from 'bcrypt';
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 import { sendTwilioMessage } from "../Helpers/Sms.js";
+import { v4 as uuidv4 } from 'uuid'
 
 
 export const Register = async ( req, res) => {
@@ -86,7 +87,8 @@ export const getCurrentUser = async ( req, res) => {
             name: user?.name,
             email: user?.email,
             role: user?.role,
-            _id: user?._id
+            _id: user?._id,
+            number: user?.number
         }
 
         return res.status(200).json({ success: true, user: userObeject })
@@ -125,10 +127,12 @@ export const sendOtp = async(req, res) => {
 
         const userNumber = await UserModals.findById(userId)
 
-        const otp = "56561"
-        const message = `Hi, Your Awdiz mobile verfication otp is ${otp}`
+        const randomNumber = uuidv4();
+        const otp = randomNumber.toUpperCase().slice(0,6);
+        const message = `Hi,${user?.name} Your Awdiz mobile verfication otp is ${otp}`
         if(userNumber) {
             const responseFromTwilio = sendTwilioMessage(userNumber.number, message)
+            console.log(responseFromTwilio)
             if(responseFromTwilio) {
                 userNumber.otpForNumberVerification = otp;
                 await userNumber.save()
@@ -136,6 +140,32 @@ export const sendOtp = async(req, res) => {
             }
         }
         return res.json({ success: false, message: "User not found.."})
+    } catch (error) {
+        return res.json({ success: false , message: error })
+    }
+}
+
+export const verifyOtp = async (req, res) => {
+    try{
+        const {userId} = req.body;
+        const {otpNumber} = req.body;
+
+        if(!userId) return res.status(404).json({ success: false, message: "UserId is required"})
+
+        if(!otpNumber) return res.status(404).json({ success: false, message: "Otp is required"})
+
+        if(user) {
+            if(user.otpForNumberVerification == otpNumber){
+                user.isNumberVerified = true;
+                await user.save();
+                return res.status(200).json({success: true , message: "Otp verified successfully"})
+            }
+            return res.status(404).json({success: false, message: "Not a valid Otp Number"})
+        }
+
+        return res.status(404).json({success: false, message: "Not a valid user..."})
+
+
     } catch (error) {
         return res.json({ success: false , message: error })
     }

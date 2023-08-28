@@ -3,7 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { Login, Register, getCurrentUser, getNumber, sendOtp } from './controllers/UserControllers.js';
+import { Login, Register, getCurrentUser, getNumber, sendOtp, verifyOtp } from './controllers/UserControllers.js';
 import { addComments, addProduct, addRating, allProducts, deleteYourProduct, getYourProducts, updateProduct } from './controllers/Product.conroller.js';
 import { checkIsAdmin, checkSeller, isCheckValidUser } from './Middleware/All.middleware.js';
 import { addCart, addWhislist,  deleteCartProduct, getCartProducts, getWhislist } from './controllers/Buyer.controller.js';
@@ -28,6 +28,8 @@ app.post('/login', Login)
 app.post('/get-number', getNumber)
 
 app.post('/send-otp', sendOtp)
+
+app.post('/verify-otp', verifyOtp)
 
 app.post('/get-current-user', getCurrentUser)
 
