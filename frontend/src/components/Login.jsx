@@ -37,7 +37,7 @@ const Login = () => {
 
   useEffect(() => {
     if (state?.user?.name) {
-      'router'('/')
+      router('/')
     }
   }, [state])
 

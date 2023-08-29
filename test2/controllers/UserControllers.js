@@ -123,39 +123,48 @@ export const sendOtp = async(req, res) => {
     try{
 
         const { userId } = req.body;
-        if(!userId) return res.json({success: false, message: "UserId is mandatory..."})
+        if(!userId) return res.status(404).json({success: false, message: "UserId is mandatory..."})
+        // console.log(userId)
 
         const userNumber = await UserModals.findById(userId)
+        // console.log(userNumber)
 
         const randomNumber = uuidv4();
         const otp = randomNumber.toUpperCase().slice(0,6);
-        const message = `Hi,${user?.name} Your Awdiz mobile verfication otp is ${otp}`
+        // const otp = "25416"
+        
+        const message = `Hi, Your Awdiz mobile verfication otp is- ${otp}`;
+        console.log(message)
         if(userNumber) {
             const responseFromTwilio = sendTwilioMessage(userNumber.number, message)
             console.log(responseFromTwilio)
             if(responseFromTwilio) {
                 userNumber.otpForNumberVerification = otp;
                 await userNumber.save()
-                return res.json({ success: true, message: "Otp send to your number"})
+                return res.status(200).json({ success: true, message: "Otp send to your number"})
             }
         }
-        return res.json({ success: false, message: "User not found.."})
+        return res.status(404).json({ success: false, message: "User not found.."})
     } catch (error) {
-        return res.json({ success: false , message: error })
+        return res.status(500).json({ success: false , message: " error from backend" })
     }
 }
 
 export const verifyOtp = async (req, res) => {
     try{
         const {userId} = req.body;
-        const {otpNumber} = req.body;
+        const {otp} = req.body;
+        console.log(otp)
 
         if(!userId) return res.status(404).json({ success: false, message: "UserId is required"})
 
-        if(!otpNumber) return res.status(404).json({ success: false, message: "Otp is required"})
+        if(!otp) return res.status(404).json({ success: false, message: "Otp is required"})
+
+        const user = await UserModals.findById(userId)
+        console.log(user)
 
         if(user) {
-            if(user.otpForNumberVerification == otpNumber){
+            if(user.otpForNumberVerification == otp){
                 user.isNumberVerified = true;
                 await user.save();
                 return res.status(200).json({success: true , message: "Otp verified successfully"})
@@ -167,6 +176,6 @@ export const verifyOtp = async (req, res) => {
 
 
     } catch (error) {
-        return res.json({ success: false , message: error })
+        return res.status(500).json({ success: false , message: error })
     }
 }

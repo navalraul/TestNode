@@ -7,8 +7,9 @@ export const sendTwilioMessage = async (toNumber, messageBody) => {
         const message = await client.messages.create({
             body: messageBody,
             from: process.env.TWILIO_FROM_NUMBER,
-            to: `+91${toNumber}`
+            to: `+91${toNumber}`,
         });
+        console.log(message)
         return message.sid;
     } catch (error) {
         console.log(error, "error in tw")
