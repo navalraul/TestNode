@@ -18,7 +18,7 @@ app.use(cors())
 app.use(morgan("dev"))
 
 app.post('/', (req, res) => {
-    res.send("Working....")
+    res.send("Working...dscs.")
 })
 
 app.post('/register', Register)
